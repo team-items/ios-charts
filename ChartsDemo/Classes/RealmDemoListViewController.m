@@ -15,6 +15,9 @@
 #import "RealmLineChartViewController.h"
 #import "RealmBarChartViewController.h"
 #import "RealmStackedBarChartViewController.h"
+#import "RealmScatterChartViewController.h"
+#import "RealmCandleChartViewController.h"
+#import "RealmPieChartViewController.h"
 
 @interface RealmDemoListViewController () <UITableViewDataSource, UITableViewDelegate>
 
@@ -45,6 +48,21 @@
                           @"title": @"Realm.io database Stacked Chart",
                           @"subtitle": @"This demonstrates how to use this library with Realm.io mobile database.",
                           @"class": RealmStackedBarChartViewController.class
+                          },
+                      @{
+                          @"title": @"Realm.io database Scatter Chart",
+                          @"subtitle": @"This demonstrates how to use this library with Realm.io mobile database.",
+                          @"class": RealmScatterChartViewController.class
+                          },
+                      @{
+                          @"title": @"Realm.io database CandleStick Chart",
+                          @"subtitle": @"This demonstrates how to use this library with Realm.io mobile database.",
+                          @"class": RealmCandleChartViewController.class
+                          },
+                      @{
+                          @"title": @"Realm.io database Pie Chart",
+                          @"subtitle": @"This demonstrates how to use this library with Realm.io mobile database.",
+                          @"class": RealmPieChartViewController.class
                           },
                       ];
 }

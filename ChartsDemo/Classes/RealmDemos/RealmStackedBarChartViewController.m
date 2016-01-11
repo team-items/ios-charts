@@ -30,7 +30,7 @@
     
     [self writeRandomStackedDataToDbWithObjectCount:200];
     
-    self.title = @"Realm.io Line Chart Chart";
+    self.title = @"Realm.io Stacked Bar Chart Chart";
     
     self.options = @[
                      @{@"key": @"toggleValues", @"label": @"Toggle Values"},
@@ -57,8 +57,6 @@
     _chartView.pinchZoomEnabled = NO;
     
     ChartYAxis *leftAxis = _chartView.leftAxis;
-    leftAxis.customAxisMax = 220.0;
-    leftAxis.customAxisMin = -50.0;
     leftAxis.startAtZeroEnabled = NO;
     
     _chartView.rightAxis.enabled = NO;

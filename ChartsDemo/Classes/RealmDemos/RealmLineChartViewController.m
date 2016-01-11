@@ -59,8 +59,6 @@
     _chartView.pinchZoomEnabled = NO;
     
     ChartYAxis *leftAxis = _chartView.leftAxis;
-    leftAxis.customAxisMax = 220.0;
-    leftAxis.customAxisMin = -50.0;
     leftAxis.startAtZeroEnabled = NO;
     
     _chartView.rightAxis.enabled = NO;
@@ -94,7 +92,9 @@
     data.dataSets = dataSets;
     [data loadXValuesFromRealmResults:results xValueField:@"xValue"];
     
+    [_chartView zoom:5.f scaleY:1.f x:0.f y:0.f];
     _chartView.data = data;
+    
     [_chartView animateWithYAxisDuration:1.4 easingOption:ChartEasingOptionEaseInOutQuart];
 }
 

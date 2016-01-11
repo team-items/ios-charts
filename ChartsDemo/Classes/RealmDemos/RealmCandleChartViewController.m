@@ -1,5 +1,5 @@
 //
-//  RealmBarChartViewController.m
+//  RealmCandleChartViewController.m
 //  ChartsDemo
 //
 //  Created by Daniel Cohen Gindi on 17/3/15.
@@ -11,39 +11,40 @@
 //  https://github.com/danielgindi/ios-charts
 //
 
-#import "RealmBarChartViewController.h"
+#import "RealmCandleChartViewController.h"
 #import "ChartsDemo-Swift.h"
 #import <Realm/Realm.h>
 #import "RealmDemoData.h"
 
-@interface RealmBarChartViewController () <ChartViewDelegate>
+@interface RealmCandleChartViewController () <ChartViewDelegate>
 
-@property (nonatomic, strong) IBOutlet BarChartView *chartView;
+@property (nonatomic, strong) IBOutlet CandleStickChartView *chartView;
 
 @end
 
-@implementation RealmBarChartViewController
+@implementation RealmCandleChartViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    [self writeRandomDataToDbWithObjectCount:200];
+    [self writeRandomCandleDataToDbWithObjectCount:200];
     
-    self.title = @"Realm.io Bar Chart Chart";
+    self.title = @"Realm.io CandleStick Chart Chart";
     
     self.options = @[
                      @{@"key": @"toggleValues", @"label": @"Toggle Values"},
                      @{@"key": @"toggleHighlight", @"label": @"Toggle Highlight"},
-                     @{@"key": @"toggleHighlightArrow", @"label": @"Toggle Highlight Arrow"},
+                     @{@"key": @"toggleStartZero", @"label": @"Toggle StartZero"},
                      @{@"key": @"animateX", @"label": @"Animate X"},
                      @{@"key": @"animateY", @"label": @"Animate Y"},
                      @{@"key": @"animateXY", @"label": @"Animate XY"},
-                     @{@"key": @"toggleStartZero", @"label": @"Toggle StartZero"},
                      @{@"key": @"saveToGallery", @"label": @"Save to Camera Roll"},
                      @{@"key": @"togglePinchZoom", @"label": @"Toggle PinchZoom"},
                      @{@"key": @"toggleAutoScaleMinMax", @"label": @"Toggle auto scale min/max"},
+                     @{@"key": @"toggleShadowColorSameAsCandle", @"label": @"Toggle shadow same color"},
                      ];
+    
     
     _chartView.delegate = self;
     
@@ -77,15 +78,14 @@
     
     RLMResults *results = [RealmDemoData allObjectsInRealm:realm];
     
-    RealmBarDataSet *set = [[RealmBarDataSet alloc] initWithResults:results yValueField:@"value" xIndexField:@"xIndex"];
-    
-    set.valueFont = [UIFont systemFontOfSize:9.f];
-    set.colors = ChartColorTemplates.joyful;
-    set.label = @"Realm BarDataSet";
-    
-    NSArray<RealmBarDataSet *> *dataSets = @[set];
+    RealmCandleDataSet *set = [[RealmCandleDataSet alloc] initWithResults:results highField:@"high" lowField:@"low" openField:@"open" closeField:@"close" xIndexField:@"xIndex"];
 
-    BarChartData *data = [[BarChartData alloc] init];
+    set.valueFont = [UIFont systemFontOfSize:9.f];
+    set.label = @"Realm CandleDataSet";
+    
+    NSArray<RealmCandleDataSet *> *dataSets = @[set];
+
+    CandleChartData *data = [[CandleChartData alloc] init];
     data.dataSets = dataSets;
     [data loadXValuesFromRealmResults:results xValueField:@"xValue"];
     
@@ -106,17 +106,10 @@
         
         [_chartView setNeedsDisplay];
     }
-    
+        
     if ([key isEqualToString:@"toggleHighlight"])
     {
         _chartView.data.highlightEnabled = !_chartView.data.isHighlightEnabled;
-        [_chartView setNeedsDisplay];
-    }
-    
-    if ([key isEqualToString:@"toggleHighlightArrow"])
-    {
-        _chartView.drawHighlightArrowEnabled = !_chartView.isDrawHighlightArrowEnabled;
-        
         [_chartView setNeedsDisplay];
     }
     
@@ -158,6 +151,16 @@
     if ([key isEqualToString:@"toggleAutoScaleMinMax"])
     {
         _chartView.autoScaleMinMaxEnabled = !_chartView.isAutoScaleMinMaxEnabled;
+        [_chartView notifyDataSetChanged];
+    }
+    
+    if ([key isEqualToString:@"toggleShadowColorSameAsCandle"])
+    {
+        for (id<ICandleChartDataSet> set in _chartView.data.dataSets)
+        {
+            set.shadowColorSameAsCandle = !set.shadowColorSameAsCandle;
+        }
+        
         [_chartView notifyDataSetChanged];
     }
 }

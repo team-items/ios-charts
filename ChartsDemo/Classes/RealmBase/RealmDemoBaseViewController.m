@@ -94,4 +94,38 @@ static float randomFloatBetween(float from, float to)
     [realm commitWriteTransaction];
 }
 
+- (void)writeRandomCandleDataToDbWithObjectCount:(NSInteger)objectCount
+{
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    
+    [realm beginWriteTransaction];
+    
+    [realm deleteObjects:RealmDemoData.allObjects];
+    
+    for (int i = 0; i < objectCount; i++)
+    {
+        float mult = 50;
+        float val = randomFloatBetween(mult, mult + 40);
+        
+        float high = randomFloatBetween(8, 17);
+        float low = randomFloatBetween(8, 17);
+        
+        float open = randomFloatBetween(1, 7);
+        float close = randomFloatBetween(1, 7);
+        
+        BOOL even = i % 2 == 0;
+        
+        RealmDemoData *d = [[RealmDemoData alloc] initWithHigh:val + high
+                                                           low:val - low
+                                                          open:even ? val + open : val - open
+                                                         close:even ? val - close : val + close
+                                                        xIndex:i
+                                                        xValue:[@(i) stringValue]];
+        
+        [realm addObject:d];
+    }
+    
+    [realm commitWriteTransaction];
+}
+
 @end

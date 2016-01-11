@@ -18,5 +18,6 @@
 
 - (void)writeRandomDataToDbWithObjectCount:(NSInteger)objectCount;
 - (void)writeRandomStackedDataToDbWithObjectCount:(NSInteger)objectCount;
+- (void)writeRandomCandleDataToDbWithObjectCount:(NSInteger)objectCount;
 
 @end

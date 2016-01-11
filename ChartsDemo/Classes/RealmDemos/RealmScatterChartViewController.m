@@ -1,5 +1,5 @@
 //
-//  RealmBarChartViewController.m
+//  RealmScatterChartViewController.m
 //  ChartsDemo
 //
 //  Created by Daniel Cohen Gindi on 17/3/15.
@@ -11,18 +11,18 @@
 //  https://github.com/danielgindi/ios-charts
 //
 
-#import "RealmBarChartViewController.h"
+#import "RealmScatterChartViewController.h"
 #import "ChartsDemo-Swift.h"
 #import <Realm/Realm.h>
 #import "RealmDemoData.h"
 
-@interface RealmBarChartViewController () <ChartViewDelegate>
+@interface RealmScatterChartViewController () <ChartViewDelegate>
 
-@property (nonatomic, strong) IBOutlet BarChartView *chartView;
+@property (nonatomic, strong) IBOutlet ScatterChartView *chartView;
 
 @end
 
-@implementation RealmBarChartViewController
+@implementation RealmScatterChartViewController
 
 - (void)viewDidLoad
 {
@@ -30,16 +30,15 @@
     
     [self writeRandomDataToDbWithObjectCount:200];
     
-    self.title = @"Realm.io Bar Chart Chart";
+    self.title = @"Realm.io Scatter Chart Chart";
     
     self.options = @[
                      @{@"key": @"toggleValues", @"label": @"Toggle Values"},
                      @{@"key": @"toggleHighlight", @"label": @"Toggle Highlight"},
-                     @{@"key": @"toggleHighlightArrow", @"label": @"Toggle Highlight Arrow"},
+                     @{@"key": @"toggleStartZero", @"label": @"Toggle StartZero"},
                      @{@"key": @"animateX", @"label": @"Animate X"},
                      @{@"key": @"animateY", @"label": @"Animate Y"},
                      @{@"key": @"animateXY", @"label": @"Animate XY"},
-                     @{@"key": @"toggleStartZero", @"label": @"Toggle StartZero"},
                      @{@"key": @"saveToGallery", @"label": @"Save to Camera Roll"},
                      @{@"key": @"togglePinchZoom", @"label": @"Toggle PinchZoom"},
                      @{@"key": @"toggleAutoScaleMinMax", @"label": @"Toggle auto scale min/max"},
@@ -77,15 +76,14 @@
     
     RLMResults *results = [RealmDemoData allObjectsInRealm:realm];
     
-    RealmBarDataSet *set = [[RealmBarDataSet alloc] initWithResults:results yValueField:@"value" xIndexField:@"xIndex"];
+    RealmScatterDataSet *set = [[RealmScatterDataSet alloc] initWithResults:results yValueField:@"value" xIndexField:@"xIndex"];
     
     set.valueFont = [UIFont systemFontOfSize:9.f];
-    set.colors = ChartColorTemplates.joyful;
-    set.label = @"Realm BarDataSet";
+    set.label = @"Realm ScatterDataSet";
     
-    NSArray<RealmBarDataSet *> *dataSets = @[set];
+    NSArray<RealmScatterDataSet *> *dataSets = @[set];
 
-    BarChartData *data = [[BarChartData alloc] init];
+    ScatterChartData *data = [[ScatterChartData alloc] init];
     data.dataSets = dataSets;
     [data loadXValuesFromRealmResults:results xValueField:@"xValue"];
     
@@ -106,17 +104,10 @@
         
         [_chartView setNeedsDisplay];
     }
-    
+        
     if ([key isEqualToString:@"toggleHighlight"])
     {
         _chartView.data.highlightEnabled = !_chartView.data.isHighlightEnabled;
-        [_chartView setNeedsDisplay];
-    }
-    
-    if ([key isEqualToString:@"toggleHighlightArrow"])
-    {
-        _chartView.drawHighlightArrowEnabled = !_chartView.isDrawHighlightArrowEnabled;
-        
         [_chartView setNeedsDisplay];
     }
     
