@@ -89,6 +89,7 @@
     
     [_chartView zoom:5.f scaleY:1.f x:0.f y:0.f];
     _chartView.data = data;
+    [self styleData:data];
     
     [_chartView animateWithYAxisDuration:1.4 easingOption:ChartEasingOptionEaseInOutQuart];
 }

@@ -1,5 +1,5 @@
 //
-//  RealmBarChartViewController.m
+//  RealmHorizontalBarChartViewController.m
 //  ChartsDemo
 //
 //  Created by Daniel Cohen Gindi on 17/3/15.
@@ -11,26 +11,26 @@
 //  https://github.com/danielgindi/ios-charts
 //
 
-#import "RealmBarChartViewController.h"
+#import "RealmHorizontalBarChartViewController.h"
 #import "ChartsDemo-Swift.h"
 #import <Realm/Realm.h>
 #import "RealmDemoData.h"
 
-@interface RealmBarChartViewController () <ChartViewDelegate>
+@interface RealmHorizontalBarChartViewController () <ChartViewDelegate>
 
-@property (nonatomic, strong) IBOutlet BarChartView *chartView;
+@property (nonatomic, strong) IBOutlet HorizontalBarChartView *chartView;
 
 @end
 
-@implementation RealmBarChartViewController
+@implementation RealmHorizontalBarChartViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    [self writeRandomDataToDbWithObjectCount:200];
+    [self writeRandomDataToDbWithObjectCount:50];
     
-    self.title = @"Realm.io Bar Chart Chart";
+    self.title = @"Realm.io Horizontal Bar Chart Chart";
     
     self.options = @[
                      @{@"key": @"toggleValues", @"label": @"Toggle Values"},
@@ -47,19 +47,7 @@
     
     _chartView.delegate = self;
     
-    _chartView.drawGridBackgroundEnabled = NO;
-    
-    _chartView.descriptionText = @"";
-    _chartView.noDataTextDescription = @"You need to provide data for the chart.";
-    
-    _chartView.dragEnabled = YES;
-    [_chartView setScaleEnabled:YES];
-    _chartView.pinchZoomEnabled = NO;
-    
-    ChartYAxis *leftAxis = _chartView.leftAxis;
-    leftAxis.startAtZeroEnabled = NO;
-    
-    _chartView.rightAxis.enabled = NO;
+    [self setupBarLineChartView:_chartView];
     
     [self setData];
 }
@@ -77,11 +65,16 @@
     
     RLMResults *results = [RealmDemoData allObjectsInRealm:realm];
     
-    RealmBarDataSet *set = [[RealmBarDataSet alloc] initWithResults:results yValueField:@"value" xIndexField:@"xIndex"];
-    
+    // RealmBarDataSet *set = [[RealmBarDataSet alloc] initWithResults:results yValueField:@"value" xIndexField:@"xIndex"];
+    RealmBarDataSet *set = [[RealmBarDataSet alloc] initWithResults:results yValueField:@"value" xIndexField:@"xIndex" stackValueField:@"floatValue"]; // stacked entries
+
     set.valueFont = [UIFont systemFontOfSize:9.f];
-    set.colors = ChartColorTemplates.joyful;
-    set.label = @"Realm BarDataSet";
+    set.colors = @[
+                   [UIColor colorWithRed:139/255.f green:195/255.f blue:74/255.f alpha:1.f],
+                   [UIColor colorWithRed:255/255.f green:193/255.f blue:7/255.f alpha:1.f],
+                   [UIColor colorWithRed:158/255.f green:158/255.f blue:158/255.f alpha:1.f],
+                   ];
+    set.label = @"Mobile OS Distribution";
     
     NSArray<RealmBarDataSet *> *dataSets = @[set];
 
@@ -89,8 +82,8 @@
     data.dataSets = dataSets;
     [data loadXValuesFromRealmResults:results xValueField:@"xValue"];
     [self styleData:data];
+    data.valueTextColor = UIColor.whiteColor;
     
-    [_chartView zoom:5.f scaleY:1.f x:0.f y:0.f];
     _chartView.data = data;
     
     [_chartView animateWithYAxisDuration:1.4 easingOption:ChartEasingOptionEaseInOutQuart];

@@ -19,5 +19,8 @@
 - (void)writeRandomDataToDbWithObjectCount:(NSInteger)objectCount;
 - (void)writeRandomStackedDataToDbWithObjectCount:(NSInteger)objectCount;
 - (void)writeRandomCandleDataToDbWithObjectCount:(NSInteger)objectCount;
+- (void)writeRandomBubbleDataToDbWithObjectCount:(NSInteger)objectCount;
+
+- (void)styleData:(ChartData *)data;
 
 @end

@@ -93,6 +93,9 @@
     PieChartData *data = [[PieChartData alloc] init];
     data.dataSets = dataSets;
     [data loadXValuesFromRealmResults:results xValueField:@"xValue"];
+    [self styleData:data];
+    data.valueTextColor = UIColor.whiteColor;
+    data.valueFont = [UIFont fontWithName:@"HelveticaNeue-Light" size:12.f];
     
     _chartView.data = data;
     [_chartView animateWithYAxisDuration:1.4 easingOption:ChartEasingOptionEaseInOutQuart];

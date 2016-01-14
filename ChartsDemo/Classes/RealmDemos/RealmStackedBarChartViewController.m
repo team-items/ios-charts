@@ -45,21 +45,9 @@
                      @{@"key": @"toggleAutoScaleMinMax", @"label": @"Toggle auto scale min/max"},
                      ];
     
+    [self setupBarLineChartView:_chartView];
+    
     _chartView.delegate = self;
-    
-    _chartView.drawGridBackgroundEnabled = NO;
-    
-    _chartView.descriptionText = @"";
-    _chartView.noDataTextDescription = @"You need to provide data for the chart.";
-    
-    _chartView.dragEnabled = YES;
-    [_chartView setScaleEnabled:YES];
-    _chartView.pinchZoomEnabled = NO;
-    
-    ChartYAxis *leftAxis = _chartView.leftAxis;
-    leftAxis.startAtZeroEnabled = NO;
-    
-    _chartView.rightAxis.enabled = NO;
     
     [self setData];
 }

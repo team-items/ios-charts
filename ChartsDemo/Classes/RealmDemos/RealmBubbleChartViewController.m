@@ -1,5 +1,5 @@
 //
-//  RealmBarChartViewController.m
+//  RealmBubbleChartViewController.m
 //  ChartsDemo
 //
 //  Created by Daniel Cohen Gindi on 17/3/15.
@@ -11,35 +11,34 @@
 //  https://github.com/danielgindi/ios-charts
 //
 
-#import "RealmBarChartViewController.h"
+#import "RealmBubbleChartViewController.h"
 #import "ChartsDemo-Swift.h"
 #import <Realm/Realm.h>
 #import "RealmDemoData.h"
 
-@interface RealmBarChartViewController () <ChartViewDelegate>
+@interface RealmBubbleChartViewController () <ChartViewDelegate>
 
-@property (nonatomic, strong) IBOutlet BarChartView *chartView;
+@property (nonatomic, strong) IBOutlet BubbleChartView *chartView;
 
 @end
 
-@implementation RealmBarChartViewController
+@implementation RealmBubbleChartViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    [self writeRandomDataToDbWithObjectCount:200];
+    [self writeRandomBubbleDataToDbWithObjectCount:15];
     
-    self.title = @"Realm.io Bar Chart Chart";
+    self.title = @"Realm.io Bubble Chart Chart";
     
     self.options = @[
                      @{@"key": @"toggleValues", @"label": @"Toggle Values"},
                      @{@"key": @"toggleHighlight", @"label": @"Toggle Highlight"},
-                     @{@"key": @"toggleHighlightArrow", @"label": @"Toggle Highlight Arrow"},
+                     @{@"key": @"toggleStartZero", @"label": @"Toggle StartZero"},
                      @{@"key": @"animateX", @"label": @"Animate X"},
                      @{@"key": @"animateY", @"label": @"Animate Y"},
                      @{@"key": @"animateXY", @"label": @"Animate XY"},
-                     @{@"key": @"toggleStartZero", @"label": @"Toggle StartZero"},
                      @{@"key": @"saveToGallery", @"label": @"Save to Camera Roll"},
                      @{@"key": @"togglePinchZoom", @"label": @"Toggle PinchZoom"},
                      @{@"key": @"toggleAutoScaleMinMax", @"label": @"Toggle auto scale min/max"},
@@ -47,19 +46,7 @@
     
     _chartView.delegate = self;
     
-    _chartView.drawGridBackgroundEnabled = NO;
-    
-    _chartView.descriptionText = @"";
-    _chartView.noDataTextDescription = @"You need to provide data for the chart.";
-    
-    _chartView.dragEnabled = YES;
-    [_chartView setScaleEnabled:YES];
-    _chartView.pinchZoomEnabled = NO;
-    
-    ChartYAxis *leftAxis = _chartView.leftAxis;
-    leftAxis.startAtZeroEnabled = NO;
-    
-    _chartView.rightAxis.enabled = NO;
+    [self setupBarLineChartView:_chartView];
     
     [self setData];
 }
@@ -77,20 +64,18 @@
     
     RLMResults *results = [RealmDemoData allObjectsInRealm:realm];
     
-    RealmBarDataSet *set = [[RealmBarDataSet alloc] initWithResults:results yValueField:@"value" xIndexField:@"xIndex"];
+    RealmBubbleDataSet *set = [[RealmBubbleDataSet alloc] initWithResults:results yValueField:@"value" xIndexField:@"xIndex" sizeField:@"bubbleSize"];
     
     set.valueFont = [UIFont systemFontOfSize:9.f];
-    set.colors = ChartColorTemplates.joyful;
-    set.label = @"Realm BarDataSet";
+    set.label = @"Realm BubbleDataSet";
     
-    NSArray<RealmBarDataSet *> *dataSets = @[set];
+    NSArray<RealmLineDataSet *> *dataSets = @[set];
 
-    BarChartData *data = [[BarChartData alloc] init];
+    BubbleChartData *data = [[BubbleChartData alloc] init];
     data.dataSets = dataSets;
     [data loadXValuesFromRealmResults:results xValueField:@"xValue"];
     [self styleData:data];
     
-    [_chartView zoom:5.f scaleY:1.f x:0.f y:0.f];
     _chartView.data = data;
     
     [_chartView animateWithYAxisDuration:1.4 easingOption:ChartEasingOptionEaseInOutQuart];
@@ -111,13 +96,6 @@
     if ([key isEqualToString:@"toggleHighlight"])
     {
         _chartView.data.highlightEnabled = !_chartView.data.isHighlightEnabled;
-        [_chartView setNeedsDisplay];
-    }
-    
-    if ([key isEqualToString:@"toggleHighlightArrow"])
-    {
-        _chartView.drawHighlightArrowEnabled = !_chartView.isDrawHighlightArrowEnabled;
-        
         [_chartView setNeedsDisplay];
     }
     

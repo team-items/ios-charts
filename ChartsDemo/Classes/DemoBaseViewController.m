@@ -224,4 +224,30 @@
     l.yOffset = 0.0;
 }
 
+- (void)setupRadarChartView:(RadarChartView *)chartView
+{
+    chartView.descriptionText = @"";
+    chartView.noDataTextDescription = @"You need to provide data for the chart.";
+}
+
+- (void)setupBarLineChartView:(BarLineChartViewBase *)chartView
+{
+    chartView.descriptionText = @"";
+    chartView.noDataTextDescription = @"You need to provide data for the chart.";
+    
+    chartView.drawGridBackgroundEnabled = NO;
+    
+    chartView.dragEnabled = YES;
+    [chartView setScaleEnabled:YES];
+    chartView.pinchZoomEnabled = NO;
+    
+    ChartYAxis *leftAxis = chartView.leftAxis;
+    leftAxis.startAtZeroEnabled = NO;
+    
+    ChartXAxis *xAxis = chartView.xAxis;
+    xAxis.labelPosition = XAxisLabelPositionBottom;
+    
+    chartView.rightAxis.enabled = NO;
+}
+
 @end

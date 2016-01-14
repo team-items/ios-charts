@@ -128,4 +128,32 @@ static float randomFloatBetween(float from, float to)
     [realm commitWriteTransaction];
 }
 
+- (void)writeRandomBubbleDataToDbWithObjectCount:(NSInteger)objectCount
+{
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    
+    [realm beginWriteTransaction];
+    
+    [realm deleteObjects:RealmDemoData.allObjects];
+    
+    for (int i = 0; i < objectCount; i++)
+    {
+        RealmDemoData *d = [[RealmDemoData alloc] initWithValue:randomFloatBetween(30.f, 130.f) xIndex:i bubbleSize:randomFloatBetween(15.f, 35.f) xValue:[@(i) stringValue]];
+        [realm addObject:d];
+    }
+    
+    [realm commitWriteTransaction];
+}
+
+- (void)styleData:(ChartData *)data
+{
+    NSNumberFormatter *percentFormatter = [[NSNumberFormatter alloc] init];
+    percentFormatter.positiveSuffix = @"%";
+    percentFormatter.negativeSuffix = @"%";
+    
+    data.valueFont = [UIFont fontWithName:@"HelveticaNeue-Light" size:8.f];
+    data.valueTextColor = UIColor.darkGrayColor;
+    data.valueFormatter = percentFormatter;
+}
+
 @end

@@ -91,6 +91,7 @@
     LineChartData *data = [[LineChartData alloc] init];
     data.dataSets = dataSets;
     [data loadXValuesFromRealmResults:results xValueField:@"xValue"];
+    [self styleData:data];
     
     [_chartView zoom:5.f scaleY:1.f x:0.f y:0.f];
     _chartView.data = data;

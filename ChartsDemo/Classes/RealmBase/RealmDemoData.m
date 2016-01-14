@@ -69,4 +69,22 @@
     return self;
 }
 
+- (id)initWithValue:(float)value
+             xIndex:(int)xIndex
+         bubbleSize:(float)bubbleSize
+             xValue:(NSString *)xValue;
+{
+    self = [super init];
+    
+    if (self)
+    {
+        self.value = value;
+        self.xIndex = xIndex;
+        self.bubbleSize = bubbleSize;
+        self.xValue = xValue;
+    }
+    
+    return self;
+}
+
 @end

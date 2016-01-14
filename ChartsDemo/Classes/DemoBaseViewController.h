@@ -25,5 +25,7 @@
 @property (nonatomic, strong) IBOutlet NSArray *options;
 
 - (void)setupPieChartView:(PieChartView *)chartView;
+- (void)setupRadarChartView:(RadarChartView *)chartView;
+- (void)setupBarLineChartView:(BarLineChartViewBase *)chartView;
 
 @end
