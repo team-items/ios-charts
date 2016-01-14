@@ -48,6 +48,7 @@
     [self setupBarLineChartView:_chartView];
     
     _chartView.delegate = self;
+    _chartView.leftAxis.startAtZeroEnabled = YES;
     
     [self setData];
 }
