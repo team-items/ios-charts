@@ -1,3 +1,5 @@
+**The Repository was forked for use in the MissionControl iOS App**
+
 **Version 2.1.6**, synced to [MPAndroidChart #0c97941](https://github.com/PhilJay/MPAndroidChart/commit/0c97941)
 
 ![alt tag](https://raw.github.com/danielgindi/ios-charts/master/Assets/feature_graphic.png)
