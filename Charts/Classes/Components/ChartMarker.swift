@@ -21,48 +21,99 @@ public class ChartMarker: ChartComponentBase
     
     /// Use this to return the desired offset you wish the MarkerView to have on the x-axis.
     public var offset: CGPoint = CGPoint()
+    public var color: UIColor?
+    public var arrowSize = CGSize(width: 15, height: 11)
+    public var font: UIFont?
+    public var insets = UIEdgeInsets()
+    public var minimumSize = CGSize()
     
-    /// The marker's size
-    public var size: CGSize
-    {
-        get
-        {
-            return image!.size
-        }
-    }
+    private var labelns: NSString?
+    private var _labelSize: CGSize = CGSize()
+    private var _size: CGSize = CGSize()
+    private var _paragraphStyle: NSMutableParagraphStyle?
+    private var _drawAttributes = [String : AnyObject]()
     
-    public override init()
+    public init(color: UIColor, font: UIFont, insets: UIEdgeInsets)
     {
         super.init()
+        
+        self.color = color
+        self.font = font
+        self.insets = insets
+        
+        _paragraphStyle = NSParagraphStyle.defaultParagraphStyle().mutableCopy() as? NSMutableParagraphStyle
+        _paragraphStyle?.alignment = .Center
     }
     
-    /// Returns the offset for drawing at the specific `point`
-    ///
-    /// - parameter point: This is the point at which the marker wants to be drawn. You can adjust the offset conditionally based on this argument.
-    /// - By default returns the self.offset property. You can return any other value to override that.
-    public func offsetForDrawingAtPos(point: CGPoint) -> CGPoint
-    {
-        return offset;
-    }
+    public  var size: CGSize { return _size; }
     
-    /// Draws the ChartMarker on the given position on the given context
     public func draw(context context: CGContext, point: CGPoint)
     {
-        let offset = self.offsetForDrawingAtPos(point)
-        let size = self.size
+        if (labelns == nil)
+        {
+            return
+        }
         
-        let rect = CGRect(x: point.x + offset.x, y: point.y + offset.y, width: size.width, height: size.height)
+        var rect = CGRect(origin: point, size: _size)
+        rect.origin.x -= _size.width / 2.0
+        rect.origin.y -= _size.height
+        
+        CGContextSaveGState(context)
+        
+        CGContextSetFillColorWithColor(context, color?.CGColor)
+        CGContextBeginPath(context)
+        CGContextMoveToPoint(context,
+            rect.origin.x,
+            rect.origin.y)
+        CGContextAddLineToPoint(context,
+            rect.origin.x + rect.size.width,
+            rect.origin.y)
+        CGContextAddLineToPoint(context,
+            rect.origin.x + rect.size.width,
+            rect.origin.y + rect.size.height - arrowSize.height)
+        CGContextAddLineToPoint(context,
+            rect.origin.x + (rect.size.width + arrowSize.width) / 2.0,
+            rect.origin.y + rect.size.height - arrowSize.height)
+        CGContextAddLineToPoint(context,
+            rect.origin.x + rect.size.width / 2.0,
+            rect.origin.y + rect.size.height)
+        CGContextAddLineToPoint(context,
+            rect.origin.x + (rect.size.width - arrowSize.width) / 2.0,
+            rect.origin.y + rect.size.height - arrowSize.height)
+        CGContextAddLineToPoint(context,
+            rect.origin.x,
+            rect.origin.y + rect.size.height - arrowSize.height)
+        CGContextAddLineToPoint(context,
+            rect.origin.x,
+            rect.origin.y)
+        CGContextFillPath(context)
+        
+        rect.origin.y += self.insets.top
+        rect.size.height -= self.insets.top + self.insets.bottom
         
         UIGraphicsPushContext(context)
-        image!.drawInRect(rect)
+        
+        labelns?.drawInRect(rect, withAttributes: _drawAttributes)
+        
         UIGraphicsPopContext()
+        
+        CGContextRestoreGState(context)
     }
     
-    /// This method enables a custom ChartMarker to update it's content everytime the MarkerView is redrawn according to the data entry it points to.
-    ///
-    /// - parameter highlight: the highlight object contains information about the highlighted value such as it's dataset-index, the selected range or stack-index (only stacked bar entries).
     public func refreshContent(entry entry: ChartDataEntry, highlight: ChartHighlight)
     {
-        // Do nothing here...
+        let label = entry.value.description
+        labelns = label as NSString
+        
+        _drawAttributes.removeAll()
+        _drawAttributes[NSFontAttributeName] = self.font
+        _drawAttributes[NSParagraphStyleAttributeName] = _paragraphStyle
+        
+        _labelSize = labelns?.sizeWithAttributes(_drawAttributes) ?? CGSizeZero
+        _size.width = _labelSize.width + self.insets.left + self.insets.right
+        _size.height = _labelSize.height + self.insets.top + self.insets.bottom
+        _size.width = max(minimumSize.width, _size.width)
+        _size.height = max(minimumSize.height, _size.height)
     }
+
 }
